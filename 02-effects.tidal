@@ -1,0 +1,59 @@
+**********EFFECTS**********
+
+--Tidal has lots of effects we can use to change the way things sound.
+
+-- vowel is a filter which adds a vowel sound
+-- try a, e, i, o and u
+
+d1 $ sound "drum drum drum drum" # n "0 1 0 2"
+
+d1 $ sound "drum drum drum drum" # n "0 1 0 2" # vowel "a"
+
+-- We can use the mini notation to create sequences of effects too:
+
+d1 $ sound "drum drum drum drum" # n "0 1 0 2" # vowel "a o e e"
+
+-- You can add a non-vowel letter to pause the vowel effect
+
+d1 $ sound "drum drum drum drum" # n "0 1 0 2" # vowel "a o p p"
+
+-- Tidal does its best to map patterns across to one another
+
+d1 $ sound "drum drum drum drum" # n "0 1 0 2" # vowel "a o e"
+
+-- The structure comes from the left - try swapping the parameters
+
+d1 $ vowel "a [o o] ~ i" # sound "drum" # n "0 1 0 2"
+
+-- We'll learn a bit more about how to manipulate structure later :)
+
+-- gain changes the volume of different sounds
+
+d1 $ sound "bd hh sn:1 hh sn:1 hh" # gain "1 0.7 0.5"
+
+-- speed can be used to pitch samples
+-- (we can also use note to do this, but that's for later)
+
+-- speed affects the speed of playback,
+-- e.g. 2 = play the sample twice as fast and move the note up an octave
+
+d1 $ sound "numbers:1 numbers:2 numbers:3 numbers:4" # speed "1 1.5 2 0.5"
+
+-- Or we can take the pattern from the speed parameter
+
+d1 $ speed "1*2 2*2 4*6" # sound "jungbass:6"
+
+-- pan allows us to create stereo effects - 0 = left, 0.5 = middle, 1 = right
+
+d1 $ sound "numbers:1 numbers:2 numbers:3 numbers:4" # pan "0 0.5 1"
+
+-- shape adds distortion (but be careful - it also makes the sound much louder)
+
+d1 $ sound "kurt:4 kurt:4"
+
+d1 $ sound "kurt:4 kurt:4" # shape "0 0.78" # gain "0.7"
+
+-- feeling brave ?
+-- Try more effects:
+
+-- delay / delaytime / delayfeedback / cutoff / resonance / room / size /crush

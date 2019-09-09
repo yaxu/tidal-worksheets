@@ -1,0 +1,70 @@
+**********DOLLAR**********
+
+-- What does the dollar $ do?
+
+-- It's a Haskell operator, and doesn't do very much at all! But is super useful.
+
+-- You'll generally see it after the dx:
+
+d1 $ sound "kick clap:4"
+
+-- You don't actually need it! You can use parenthesis instead:
+
+d1 (sound "kick clap:4")
+
+-- _All_ the dollar does then,
+-- is pass whatever's on the right to the function on the left!
+
+-- That's useful because it means that we don't have to worry about
+-- matching ()s together all the time, which can get fiddly with more
+-- complicated patterns.
+
+-- For example these do the same, but maybe the first one is easier to
+-- understand and change?
+
+-- (don't worry about all these functions for now - we'll cover it all later)
+
+d1 $ someCycles (0.25 <~) $ every 3 rev $ n "0 3 [2 5]*2 5" # sound "cpu2"
+
+d1 (someCycles (0.25 <~) (every 3 rev (n "0 3 [2 5]*2 5" # sound "cpu2")))
+
+-- This DOESN'T WORK:
+
+d1 sound "kick clap:4"
+
+-- If you don't group things together using () or $, then the computer
+-- will assume that you're trying to pass *two* input arguments to d1
+-- ('sound' being one and '"kick clap:4"' being the other).
+
+d1 $ sound "kick clap:4"
+
+-- The above works because the $ makes clear that the bit on the right
+-- is a single argument to the function on the left. So "kick clap:4"
+-- gets passed to "sound", making a control pattern to pass to d1.
+
+-- Much the same is going on here:
+
+d1 $ every 3 (fast 2) $ n "0 .. 7" # sound "cpu2"
+
+-- The `every` function takes _three_ inputs - a count, a function,
+-- and a pattern. The function gets applied to the pattern every
+-- time the cycle count is up. This also works:
+
+d1 $ every 3 (fast 2) (n "0 .. 7" # sound "cpu2")
+
+-- This doesn't - Tidal thinks you're trying to pass four arguments to
+-- 'every'.
+
+d1 $ every 3 rev n "0 .. 7" # sound "cpu2"
+
+-- Looking at this, you might be tempted to replace the other
+-- parenthesis with a dollar as well:
+
+d1 $ every 3 $ fast 2 $ n "0 .. 7" # sound "cpu2"
+
+-- That doesn't work either! The dollar trick only works for the _final_
+-- argument.
+
+-- So this is probably the best we can do:
+
+d1 $ every 3 (fast 2) $ n "0 .. 7" # sound "cpu2"

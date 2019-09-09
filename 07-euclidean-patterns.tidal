@@ -1,0 +1,30 @@
+**********EUCLIDIAN PATTERNS**********
+
+-- Euclidean patterns are great building blocks for rhythm, and built
+-- into the mini-notation (we met them briefly earlier).
+-- E.g. play 3 kick drums over 8 steps:
+
+d1 $ sound "bd(3,8)"
+
+-- The `deconstruct` function lets us see what is happening.
+-- Lets deconstruct those eight steps
+
+deconstruct 8 $ "bd(3,8)"
+
+-- It'll return this:
+-- "bd ~ ~ bd ~ ~ bd ~"
+
+-- It shows how the 'euclidean algorithm' tries to arrange the kicks
+-- evenly, but can't do it perfectly, so you get a lilting rhythm
+
+-- You can also shift the pattern a number of steps:
+
+deconstruct 8 $ "bd(3,8,2)"
+
+-- "~ bd ~ ~ bd ~ bd ~"
+
+-- You can see that's the same pattern, offset by two steps.
+
+-- You can quickly create variety by patterning the euclidean pattern:
+
+d1 $ sound "bd(<3 5>,8,<0 2 4>)"

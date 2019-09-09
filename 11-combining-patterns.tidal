@@ -1,0 +1,71 @@
+**********COMBINING PATTERNS**********
+-- how to add up numbers to make people dance
+
+-- You can treat patterns of numbers like numbers,
+-- combining two patterns with simple arithmetic.
+
+-- Start with a simple sequence:
+d1 $ n ("0 2 5 7 10 12 5 2") # sound "supermandolin"
+  # legato 2
+
+-- Go up an octave just by adding 12:
+d1 $ n ("0 2 5 7 10 12 5 2" + 12) # sound "supermandolin"
+  # legato 2
+
+-- Alternate between octaves:
+d1 $ n ("0 2 5 7 10 12 5 2" + "<0 12>") # sound "supermandolin"
+  # legato 2
+
+-- More variety
+d1 $ n ("0 2 5 7 10 12 5 2" + "<0 2 7 12>") # sound "supermandolin"
+  # legato 2
+
+-- Add some variation
+d1 $ n (every 2 (+ "0 2 7 12") "0 2 5 7 10 12 5 2") # sound "supermandolin"
+  # legato 2
+
+-- I think this is called an inversion
+d1 $ n (every 4 (12 -) "0 2 5 7 10 12 5 2") # sound "supermandolin"
+  # legato 2
+
+-- What if the numbers don't line up perfectly?
+d1 $ n ("0 12 7" + "5 2") # sound "supermandolin"
+  # legato 2
+
+-- In the above, the '12' gets split in half, between the 5 and 2, so
+-- you end up with four notes per cycle in total
+
+-- So "0 12 7" plus "5 2" equals "5 [17 14] 9". So, this sounds
+-- exactly the same:
+d1 $ n ("5 [17 14] 9") # sound "supermandolin"
+  # legato 2
+
+-- If you only wanted three notes, you can use |+ to take the structure from the left
+d1 $ n ("0 12 7" |+ "5 2") # sound "supermandolin"
+  # legato 2
+
+-- In the above, the _beginning_ of notes on the left are matched with
+-- notes on the right. So 0 is matched with 5 to make 5, 12 is also
+-- matched with 5 to make 17, and 7 is matched with 2 to make 9.
+
+-- 12 matches with 5, because 12 begins one third of the way through
+-- the cycle, which lies within the first half of the cycle, when 5 is
+-- active on the right.
+
+-- If you want two events, you can use +| to take the structure from the right:
+d1 $ n ("0 12 7" +| "5 2") # sound "supermandolin"
+  # legato 2
+
+-- You can use note names too if you want:
+d1 $ n ("c g [e f]" + "<0 12 5 7>") # sound "supermandolin"
+  # legato 2
+
+-- This works for any numerical pattern
+d1 $ fast "1 2" $ n (every 3 (1+) $ "0 4 [~ 2] 5" + "0 1 [2 4] 3" + "<0 2 4 5>") # sound "drum"
+  # speed ("2 4 5" * slow 2 sine + 1)
+
+-- You can add control patterns together in this way too!
+d1 $ n "c e g" + sound "superpiano" + n "<0 12>"
+
+-- In the above there are two 'n' control patterns. Because they're
+-- combined with + rather than #, the numbers inside matching controls get added together

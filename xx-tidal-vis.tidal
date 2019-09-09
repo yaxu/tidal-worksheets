@@ -1,0 +1,32 @@
+-- Make visual patterns with Tidal
+
+-- (This isn't working atm.. probably best to leave it out)
+
+-- Installation
+
+-- Mac
+
+-- Install homebrew - https://brew.sh/
+-- Then:
+-- brew install cairo
+-- brew install pkg-config
+-- cabal update
+-- cabal install happy alex
+-- cabal install tidal-vis
+
+-- Linux
+-- cabal update
+-- cabal install happy alex
+-- cabal install tidal-vis
+
+-- Windows
+-- Not sure, sorry!
+
+
+import VisPart
+
+renderPartPDF "out" $ "[0 .. 3] 5 6" :: Pattern Int
+
+import VisCycle
+
+renderCyclePDF "out" $ "red blue green"

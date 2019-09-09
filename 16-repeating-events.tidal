@@ -1,0 +1,102 @@
+**********REPEATING EVENTS**********
+
+-- Taking a pattern and repeating its events can sound surprisingly
+-- awesome. Lets have a look at ply and stut.
+
+-- PLY and PLYWITH
+
+-- Lets start with something simple
+
+d1 $ n "0 2 [~ 3] 4" # sound "cpu2"
+
+-- The ply function repeats each event a given number of times within its time frame:
+
+d1 $ ply 2 $ n "0 2 [~ 3] 4" # sound "cpu2"
+
+-- Of course, you can pattern that number:
+
+d1 $ ply "2 3" $ n "0 2 [~ 3] 4" # sound "cpu2"
+
+hush
+
+d1 $ ply "<2 3>" $ n "0 2 [~ 3] 4" # sound "cpu2"
+
+-- Why 'ply'? Knitters will know.. Wool is made from thinner strands
+-- twisted together, the 'ply' is the number of strands. I guess it's
+-- the number of layers in a piece of plywood too.
+
+-- PLYWITH
+
+-- plyWith does the same as `ply`, but with the ability to
+-- successively apply a function to each repeat.
+
+-- Lets start really simple this time
+
+d1 $ n "0 2" # sound "cpu2"
+
+-- Multiply up the speed for each ply:
+
+d1 $ plyWith 8 (|* speed 1.4) $ n "0 2" # sound "cpu2"
+
+-- The first note will not be changed, the second will be sped by 1.4,
+-- the third by 1.4 * 1.4 (1.96), the fourth by 1.4 * 1.4 * 1.4 (1.75)
+-- and so on.
+
+-- At the time of writing, plyWith is brand new. There's a lot of
+-- possibilities with this.
+
+d1 $ jux rev $ plyWith 3 (|* speed 1.4) $ n "0 [2 [3 4]] " # sound "cpu2"
+
+-- You can even manipulate time for each ply, but good luck trying to
+-- work out what's happening.
+
+d1 $ plyWith "<3 4>" (fast 2 . (|* speed 1.4)) $ n "0 ~ 2 3" # sound "cpu2"
+
+-- STUT AND STUTWITH
+
+-- Stut is similar to ply, but repeats a sound using a fixed cycle
+-- offset, with each repeat a bit quieter than the last. It's inspired
+-- by a feature on the korg volca beats synth. The following will
+-- repeat each sound 4 times, the gain multiplied by a factor of 0.7
+-- each time (so getting quieter), and 1/16th of a cycle apart.
+
+d1 $ stut 4 0.7 (1/16) $ n "0 [3 5] 4 2" # sound "cpu2"
+
+-- You can have really small offsets to create an interesting comb
+-- effect:
+
+d1 $ stut 4 0.7 (1/128) $ n "0 [3 5] 4 2" # sound "cpu2"
+
+-- You can pattern those numbers:
+
+d1 $ stut "<4 3 8>" 0.7 "<0.125 0.01>" $ n "0 [3 5] 4 2" # sound "cpu2"
+
+-- Even using a continuous pattern if you like:
+
+d1 $ stut 4 0.7 (slow 8 $ (1/32) * sine) $ n "0 [3 5] 4 2" # sound "cpu2"
+
+-- Always good to try a jux rev.. Note that `rev` reverses the
+-- stuttered pattern, making it get louder rather than quieter
+
+d1 $ rev $ stut 8 0.5 (slow 8 $ (1/32) * sine) $ n "0 [3 5] 4 2" # sound "cpu2"
+
+-- Instead of reversing the whole pattern, you can specify a negative
+-- offset, giving the sounds a kind of preverb. Compare these two:
+
+d1 $ stut 8 0.5 (-1/32) $ n "0 [3 5] 4 2" # sound "cpu2"
+
+d1 $ stut 8 0.5 (1/32) $ n "0 [3 5] 4 2" # sound "cpu2"
+
+-- Instead of changing the gain, `stutWith` lets you successively
+-- apply any function, much like `plyWith`. You again give it the
+-- number of repeats, then the gap between repeats in cycles, and the function
+
+d1 $ stutWith 4 (1/32) (|* speed 1.5) $ n "0 [3 5] 4 2" # sound "cpu2"
+
+-- Lets try adding to the note value instead:
+
+d1 $ stutWith 4 (1/32) (|+ note 7) $ n "0 [3 5] 4 2" # sound "arpy"
+
+-- Delaying in thirds is a sure fire way of making techno go a bit funky
+
+d1 $ stutWith 4 (1/3) (|* speed 1.5) $ n "0 [3 5] 4 2" # sound "cpu2"

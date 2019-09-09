@@ -1,0 +1,57 @@
+**********ESCAPING THE GRID**********
+-- Beyond algorave
+
+-- How can we explore life beyond 4:4 techno?
+
+-- Tidal's notion of time is based on cycles rather than beats, so
+-- it's easy to make complex metres
+d1 $ sound "bd*3 bd*2"
+
+-- It's also easy to manipulate time without reference to any grid
+d1 $ every 2 (0.14142 <~) $ sound "bd*3 bd*2"
+
+-- You can pattern time shifts to mess up the timeline entirely
+d1 $ "[0.14142 0.3 0.25 0.63 0.1 0.52]/3" <~ (n "0 3 5 2 [~ 1] 5 3 2*2" # sound "cpu2")
+
+-- Keeping the original timeline intact underneath if you want..
+d1 $ superimpose ("[0.14142 0.3 0.25 0.63 0.1 0.52]/3" <~) $ n "0 3 5 2 [~ 1] 5 3 2*2"
+  # sound "cpu2"
+
+-- NUDGE
+
+-- The 'nudge' control lets us delay playing of events into the
+-- future, good for adding swing, or making undulating time structures
+
+-- A straight pattern
+d1 $ n "8*16" # sound "cpu2"
+
+-- With some swing
+d1 $ n "8*16" # sound "cpu2"
+  # nudge "[0 0.02]*8"
+
+-- A bit more context:
+d1 $ n "[0 2 3*2 9 [~ 2] 6 5 5, 8*16]" # sound "cpu2"
+  # nudge "[0 0.02]*8"
+
+-- Try nudging with a sinewave:
+d1 $ n "[0 2 3*2 9 [~ 2] 6 5 5, 8*16]" # sound "cpu2"
+  # nudge (slow 4 $ range 0 1 sine)
+
+-- Doing this with chopped up sounds is fun
+d1 $ (jux rev $ chop 32 $ n "0 2 3*2 9 [~ 2] 6 5 5" # sound "cpu2")
+  # nudge (slow 4 $ range 0 1 sine)
+
+-- CPS
+
+-- You can also pattern cps changes..
+
+d1 $ n "0 2 3*2 9" # sound "cpu2"
+  # cps "<1 0.75 0.5>"
+
+-- cps is global
+-- so if you put a cps change on one pattern it'll change all of them
+
+d1 $ n "0 2 3*2 9" # sound "cpu2"
+  # cps "<1 0.75 0.5>"
+
+d2 $ sound "clap:4(3,8)"

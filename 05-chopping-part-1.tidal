@@ -1,0 +1,108 @@
+**********CHOPPING**********
+
+-- Tidal is a lot about patterns of sounds. If you're using samples,
+-- you can chop them into bits and make patterns out of those bits.
+
+-- Let start with a fairly long sample:
+d1 $ slow 2 $ sound "sax"
+
+-- We can use the 'begin' and 'end' controls to just trigger
+-- e.g. the second tenth of the sound:
+
+d1 $ sound "sax" # begin 0.1 # end 0.2
+
+-- Tidal can show us what's going on here
+-- Run that code without the `d1 $` at the start,
+-- and tidal will print out what's happening in the first cycle
+
+sound "sax" # begin 0.1 # end 0.2
+
+-- You should see this:
+
+-- (0>1)|begin: 0.1f, end: 0.2f, s: "sax"
+
+-- Not too surprising - one event, from cycle position 0 to 1, with
+-- the begin and end control values you sent (the 'f' in '0.1f' just
+-- means it's a decimal/floating point number)
+
+-- Right lets try chopping that sound into four bits:
+
+d1 $ chop 4 $ sound "sax"
+
+-- Depending on your current cps tempo, you can probably hear this
+-- better as separate bits of sound if you slow it down:
+
+d1 $ slow 4 $ chop 4 $ sound "sax"
+
+-- Now run that without the `d1 $`
+
+chop 4 $ sound "sax"
+
+{-
+You should see this:
+(0>¼)|begin: 0.0f, end: 0.25f, s: "sax"
+(¼>½)|begin: 0.25f, end: 0.5f, s: "sax"
+(½>¾)|begin: 0.5f, end: 0.75f, s: "sax"
+(¾>1)|begin: 0.75f, end: 1.0f, s: "sax"
+
+So that's how chop works - takes each sound, and plays it the given
+amount of times but with different begin and end values, so you get
+different bits of sound.
+-}
+
+-- Once you've turned a sound into a pattern of bits of sound, you can
+-- transform that pattern, e.g. reverse it:
+
+d1 $ rev $ chop 16 $ sound "cp"
+
+-- When you work with tiny fragments of sound like this, this becomes
+-- a kind of sound synthesis technique. This is known as 'granular
+-- synthesis', and the bits of sound are known as sound 'grains'. (If
+-- you're working with longer samples it might be called "slicing"
+-- instead, and the bits called "slices".)
+
+d1 $ jux rev $ iter 4 $ chop "<16>" $ sound "diphone2"
+
+-- Doing granular synthesis with tidal becomes super interesting
+-- because it really blurs the line between music composition and
+-- sound synthesis.
+
+-- You have to be aware about whether you're adding effects to the
+-- original sounds or the bits of sound. For example:
+
+d1 $ chop 16 $ sound "cp" # pan sine
+
+-- The above isn't panning anything. You can see that pan is always
+-- 0.5 if you run without that the `d1 $`:
+
+chop 16 $ sound "cp" # pan sine
+
+-- It's because everything to the right of the dollar gets run first,
+-- a single value gets pulled from the sinewave and combined to the
+-- single "cp" sound, _before_ the chop. To sample from the sinewave
+-- _after_ the chop, just use parenthesis:
+
+d1 $ (chop 16 $ sound "cp") # pan sine
+
+-- Then each sound grain will get a different pan value.
+
+-- What happens when you have more than one sound?
+
+-- With chop, the grains of each sound are grouped together:
+
+d1 $ chop 8 "bd sn:2"
+
+-- But there's also `striate`
+-- which is similar but the grains get interleaved:
+
+d1 $ striate 8 "bd sn:2"
+
+-- Or `randslice` which chops a sample into the specified number of parts
+-- then plays one back at random each time the sample is triggered:
+
+d1 $ randslice 128 "pebbles*8"
+
+-- There's a lot to explore with this!
+
+d1 $ jux rev $ striate 4 "arpy <arpy:2 arpy:3> arpy:4"
+  # note "<0 2 7>"

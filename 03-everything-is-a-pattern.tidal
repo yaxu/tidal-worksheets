@@ -1,0 +1,56 @@
+**********EVERYTHING IS A PATTERN!**********
+
+-- But what is a pattern?
+
+-- Take a simple sequence, transform it in some way, and you have
+-- patterned it!
+
+-- You can kind of see (or hear) the transformation in the result -
+-- whether it's a repetition, interference, reflection, glitch or
+-- some other patterning.
+
+-- Lets start with eight percussive sounds:
+-- .. here is filling in the numbers between 0 and 7
+-- So basically is the same as "0 1 2 3 4 5 6 7"
+-- It saves you a bit of typing :)
+
+
+d1 $ n "0 .. 7" # sound "cpu1"
+
+-- Make it faster:
+
+d1 $ fast 2 $ n "0 .. 7" # sound "cpu1"
+
+-- Make it slower:
+
+d1 $ fast 0.5 $ n "0 .. 7" # sound "cpu1"
+
+-- Or! We can switch between them:
+
+d1 $ fast "2 0.5" $ n "0 .. 7" # sound "cpu1"
+
+-- This sounds the same:
+
+d1 $ n (slow 2 "[0 1 2 3 4 5 6 7] [2 3] [0 1 2 3 4 5 6 7] [6 7]") # sound "cpu1"
+
+-- Can you work out why?
+
+-- There's a few other quick transformations we can use:
+
+-- iter starts the sequence at a different point each cycle
+
+d1 $ iter 4 $ n "0 .. 7" # sound "cpu1"
+
+-- rev plays the sequence backwards
+
+d1 $ rev $ n "0 .. 7" # sound "cpu1"
+
+-- how about using every to control when this happens
+
+d1 $ every 3 (rev) $ n "0 .. 7" # sound "cpu1"
+
+-- TIDAL'S MOST USED TRANSFORMATION KLAXON
+
+-- jux lets us hear a transformation in one speaker only
+
+d1 $ jux (rev) $ n "0 .. 7" # sound "cpu1"

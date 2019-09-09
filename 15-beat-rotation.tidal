@@ -1,0 +1,28 @@
+**********BEAT ROTATION**********
+
+-- Beat rotation is a simple way to completely change the feel of a
+-- pattern while hardly changing it at all
+
+-- It works well with breaks:
+
+d1 $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- Lets shift that by a quarter:
+
+d1 $ 0.25 <~ (loopAt 1 $ chop 8 $ sound "break:4")
+
+-- And do that every fourth repetition only:
+
+d1 $ every 4 (0.25 <~) $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- Or for some cycles, at random:
+
+d1 $ someCycles (0.25 <~) $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- You can pattern the shift amount
+
+d1 $ "0.25 0 0.125" <~ (loopAt 1 $ chop 8 $ sound "break:4")
+
+-- A different shift value per cycle..
+
+d1 $ "<0.25 0 0.125>" <~ (loopAt 1 $ chop 8 $ sound "break:4")

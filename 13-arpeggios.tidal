@@ -1,0 +1,53 @@
+**********ARPEGGIOS**********
+
+-- Simply put, an arpeggio is a 'broken chord'.
+
+-- Here's a c major chord:
+
+d1 $ n "c'maj" # sound "superpiano"
+
+-- Here it is broken up:
+d1 $ arpeggiate $ n "c'maj" # sound "superpiano"
+
+-- We can add more notes to the chord:
+
+d1 $ arpeggiate $ n "c'maj'4" # sound "superpiano"
+
+-- Add another chord:
+
+d1 $ arpeggiate $ n "c'maj'4 e'min" # sound "superpiano"
+
+-- The arpeggiate function plays the notes in turn, but we can also go up and down
+
+d1 $ arp "updown" $ n "c'maj'4 e'min" # sound "superpiano"
+
+-- You can pattern the arpeggiation if you like:
+
+d1 $ arp "<updown pinkyup thumbup up down updown downup converge disconverge>"
+  $ n "c'maj'4 e'min" # sound "superpiano"
+
+-- You can build similar things by layering up transpositions.
+-- Lets start with a simple melody:
+
+d1 $ n "<c e f g>" # sound "superpiano"
+
+-- Add a layer on top, offset in time by a quarter of a cycle, and transposed up by 7 notes
+
+d1 $ off 0.25 (|+ n 7)
+  $ n "<c(3,8) e(3,8,2) f(3,8) g(3,8)>"
+  # sound "superpiano"
+
+-- yaxu greatest hits ;)
+
+-- Add another layer, up an octave:
+d1 $ off 0.125 (|+ n 12) $ off 0.25 (|+ n 7) $
+  n "<c(3,8) e(3,8,2) f(3,8) g(3,8)>" # sound "superpiano"
+
+-- jux rev it
+d1 $ jux rev $ off 0.125 (|+ n 12) $ off 0.25 (|+ n 7) $
+  n "<c(3,8) e(3,8,2) f(3,8) g(3,8)>" # sound "superpiano"
+
+-- Lets listen to that on percussion as well
+d2 $ jux rev $ off 0.125 (|+ n 12) $ off 0.25 (|+ n 7) $
+  n "<c(3,8) e(3,8,2) f(3,8) g(3,8)>" # sound "cpu2"
+  # gain 1.2

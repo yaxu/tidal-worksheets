@@ -1,0 +1,68 @@
+**********BOOLEAN PATTERNS**********
+
+-- Boolean patterns are patterns of true/false values, and have a lot
+-- of use, for example in blending different patterns together.
+
+-- Lets start with MASKing
+
+-- and a break chopped into eight bits:
+d1 $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- We can use mask to only play the first half:
+d1 $ mask "t f" $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- The "t" stands for true, and "f" for false. If you prefer, you can
+-- use 1 and 0 instead, they mean the same:
+d1 $ mask "1 0" $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- A slightly more complex mask:
+d1 $ mask "t f [t f] t" $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- Lets mess with it a bit more:
+d1 $ mask (iter 4 "t f [t f] t") $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- We're not transforming the progression of the underlying break at
+-- all, just changing which bits of it we hear. Fun!
+
+--The 'inv' function inverts a boolean pattern, so true becomes false,
+--and false becomes true:
+d1 $ mask (inv "t f [t f] t") $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- We can do that e.g. every other cycle
+d1 $ mask (every 2 inv "t f [t f] t") $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- Euclidean syntax works here ...
+d1 $ mask ("t(3,8)") $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- ... including with inv:
+d1 $ mask (every 2 inv "t(3,8)") $ loopAt 1 $ chop 8 $ sound "break:4"
+
+-- SEW AND STITCH
+
+-- Lets take two fairly simple patterns:
+d1 $ chunk 4 (hurry 2) $ n "0 .. 7" # sound "cpu2"
+
+d1 $ n "0(5,8,<0 2>)" # sound "arpy" # lpq 0.2 # lpf (rand * 2000)
+
+-- sew lets you 'sew them together', by switching between them:
+d1 $ sew "t f"
+  (chunk 4 (hurry 2) $ n "0 .. 7" # sound "cpu2")
+  (n "0(5,8,<0 2>)" # sound "arpy" # lpq 0.2 # lpf (rand * 2000))
+
+-- Lots of fun to be had by patterning the boolean pattern:
+d1 $ sew (iter 4 "t f t f")
+  (chunk 4 (hurry 2) $ n "0 .. 7" # sound "cpu2")
+  (n "0(5,8,<0 2>)" # sound "arpy" # lpq 0.2 # lpf (rand * 2000))
+
+-- Stitch is similar but the boolean pattern provides the 'structure'
+-- So each 't' triggers a sound in the first one, and each 'f'
+-- triggers one in the second one. It doesn't really use the structure
+-- of the source patterns, so you may as well keep them simple:
+d1 $ stitch "t(5,8)"
+  (n "0 .. 7" # sound "cpu2")
+  (sound "arpy" # lpq 0.2 # lpf (rand * 2000))
+
+-- Another example, this time just stitching the sound:
+d1 $ sound (stitch (every 3 inv "t*2 [t f] f [f t] t*2 [f t] t f*2") "bd" "<snare:3 snare:5>")
+  # speed "1.5 3 2"
+  

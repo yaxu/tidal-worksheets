@@ -1,0 +1,82 @@
+**********CHUNKING PATTERNS**********
+
+-- What does it mean to 'chunk' a pattern?
+-- To do things to particular parts of a pattern
+
+-- There's quite a few functions for doing this. Lets look at `within`
+-- and `chunk` for applying functions to chunks and `bite` and `chew`
+-- for rearranging chunks.
+
+-- taking a simple scale:
+d1 $ n "0 .. 7" # sound "arpy"
+
+-- WITHIN
+
+-- Lets make the first half of it twice as fast:
+d1 $ within (0,0.5) (fast 2) $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- The result sounds like this:
+d1 $ n "[0 1 2 3 4 5 6 7] [4 5 6 7]" # sound "arpy"
+
+-- Note that the second half doesn't continue from the first half. You
+-- just hear what the pattern _would_ have been if it had been running
+-- at normal speed the whole time. Just as with this:
+d1 $ fast "2 1" $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- CHUNK
+-- Chunk is kind of similar but you just give it one number,
+-- being the number of chunks:
+
+d1 $ chunk 4 (fast 2) $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- The first time around it'll make the first quarter twice as
+-- fast. The second cycle it'll make the second quarter twice as
+-- fast. And so on until it goes back to the first quarter again.
+
+-- Chunk is a great way to take a simple sequence and quickly pattern
+-- it to make some lively variety:
+
+d1 $ chunk 4 (hurry 2 . (# crush 4)) $ n "0 1 2 3 . 3 4 2" # sound "cpu2"
+
+-- BITE
+
+-- Unlike chunk and within, the `bite` function isn't about applying
+-- functions to chunks of pattern, but rearranging the chunks.
+-- Back to our scale:
+
+d1 $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- Lets bite it into 4 chunks, then play those chunks one after another:
+
+d1 $ bite 4 "0 1 2 3" $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- Yes, that sounds exactly the same!
+-- So lets change the order of the chunks:
+
+d1 $ bite 4 "0 2 3 1" $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- Ok lets try a funkier rearrangement:
+
+d1 $ bite 4 "[0 2] [1 3] 1*3 1" $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- Notice how the chunks are 'sped up' to fit into the bite pattern.
+
+-- CHEW
+
+-- chew is much the same as bite, but it changes the rate (pitch) of
+-- the sounds, as well as the pattern. Compare bite and chew:
+
+d1 $ bite 4 "0 0*2 1 1*4" $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+d1 $ chew 4 "0 0*2 1 1*4" $ n "0 1 2 3 4 5 6 7" # sound "arpy"
+
+-- Again a good way to go from a simple sequence:
+
+d1 $ n "0 [1 2] ~ 3 3*2 [4 7] 2 3" # sound "cpu2"
+
+-- To something quite different:
+
+d1 $ chew 4 "0 <2 3> 1 3*2" $ n "0 [1 2] ~ 3 3*2 [4 7] 2 3" # sound "cpu2"
+
+-- You can also pattern the pattern of chunks..
+d1 $ chew 4 (iter 4 "0 <2 3> 1 3*2") $ n "0 [1 2] ~ 3 3*2 [4 7] 2 3" # sound "cpu2"

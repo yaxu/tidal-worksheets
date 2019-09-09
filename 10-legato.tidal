@@ -1,0 +1,37 @@
+**********LEGATO**********
+
+-- Legato changes the length of a sound,
+-- relative to its duration in the pattern.
+
+-- Here's quite a long sound,
+-- which layers up (unless you have setcps really low)
+d1 $ sound "sax"
+
+-- We can stop the layering by turning legato on:
+d1 $ sound "sax"
+  # legato 1
+
+-- If the event is only there for half the pattern,
+-- you'll only hear it for half a pattern:
+d1 $ sound "sax ~"
+  # legato 1
+
+-- Try it with a euclidean pattern:
+d1 $ sound "sax(3,8)"
+  # legato 1
+
+-- You can increase or decrease legato:
+d1 $ sound "sax(3,8)"
+  # legato 2
+
+d1 $ sound "sax(3,8)"
+  # legato 0.25
+
+-- For superdirt synths, legato is 'default on', so you can hear the
+-- sounds being played faster are also shorter:
+d1 $ n "c g*8" # sound "supermandolin"
+
+-- Again, you can use legato to increase note durations by the given
+-- factor:
+d1 $ n "c g*8" # sound "supermandolin"
+  # legato 4

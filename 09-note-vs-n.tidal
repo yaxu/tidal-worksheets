@@ -1,0 +1,50 @@
+**********NOTE vs N**********
+
+-- Confusingly, the 'sound' and 's' controls are exactly the same,
+-- but 'note' and 'n' sometimes behave differently.
+-- Lets get clear on the difference :)
+
+-- These all do the same:
+
+d1 $ sound "gretsch:6"
+
+d1 $ s "gretsch:6"
+
+d1 $ s "gretsch" # n 6
+
+-- This sounds different. Why?
+
+d1 $ s "gretsch" # note 6
+
+-- If you're using samples (as above), then 'n' means 'pick this
+-- sample number from the given sample set', in this case
+-- 'gretsch'. Superdirt will look in the 'gretsch' subfolder in the
+-- Dirt-Samples folder, and play the seventh one.
+
+-- 'note' means something different - it'll 'pitch up' the sound by 6
+-- semitones (notes) by playing it faster. Because this particular
+-- drum has a little bit of a note to it, we can use this to make
+-- tunes:
+
+d1 $ s "gretsch" >| note "0 2 [3 12] [24 7]"
+
+-- Or use a synth sound:
+
+d1 $ s "supermandolin" >| note "0 2 [3 12] [24 7]"
+
+-- We can also use note names instead of numbers. This particular
+-- sound is tuned to 'c' so the notes end up being correct
+
+d1 $ s "supermandolin" >| note "c e [g g6] a"
+
+-- This can work quite well, just be aware that the higher you pitch
+-- up a note, the shorter it gets
+
+d1 $ s "supermandolin" >| note "c4 c c6 c7 c8"
+
+-- If you're using a synth voice rather than a sample, then note and n
+-- actually do the same thing.
+
+d1 $ s "supermandolin" >| note "c e [g g6] a"
+
+d1 $ s "supermandolin" >| n "c e [g g6] a"

@@ -1,0 +1,87 @@
+**********CHOPPING PART 2**********
+
+-- Chopping and other techniques for working with longer samples
+
+-- Working with chopped up sound grains is particularly fun with longer samples.
+
+-- Tidal is mostly about trigger messages, it generally doesn't care
+-- so much about how long samples are.
+-- So if you play longer sounds you can get overlapping:
+
+d1 $ sound "break:4"
+
+-- You can tweak the cps to match the tempo of the sample:
+
+setcps 0.45
+
+-- That's a bit tedious though. Another way is using loopAt:
+
+d1 $ loopAt 2 $ sound "break:4"
+
+-- Now change the tempo, to hear how superdirt will play the sound faster or slower to match:
+
+setcps 0.7
+
+setcps 1.1
+
+-- Run without the `d1 $` and you'll see what `loopAt` does - it sets
+-- the speed control, and also sets 'unit' to 'c', which tells
+-- superdirt to treat the speed as a cycle duration, speeding the
+-- sound up or slowing it down to match:
+
+loopAt 2 $ sound "break:4"
+
+-- You can use loopAt with chop, so you get perfectly contiguous sound
+-- grains. (contiguous here means lined up one after another, without
+-- gaps)
+
+d1 $ loopAt 2 $ chop 8 $ sound "break:4"
+
+-- Now you can get to patterning the grains:
+
+d1 $ rev $ iter 4 $ loopAt 2 $ chop 8 $ sound "break:4"
+
+-- This sort of thing only really works if the sound you're working
+-- with is perfectly looped. If you're making your own samples, you'll
+-- need to take care with this.
+
+d1 $ rev $ iter 4 $ loopAt 2 $ chop 8 $ sound "break:4"
+
+-- SLICE and SPLICE
+
+-- Slice and splice offer a whole other way to chop up sounds, using
+-- patterns You still give the number of slices or grains, but also
+-- give a pattern which indexes into those grains
+
+-- You can play them in order:
+
+d1 $ loopAt 1 $ slice 8 "0 1 2 3 4 5 6 7" $ sound "break:4"
+
+-- Or in another order:
+
+d1 $ loopAt 1 $ slice 8 "0 2 1 5 3 4 6*2 7" $ sound "break:4"
+
+-- Or pattern it:
+
+d1 $ loopAt 1 $ slice 8 (iter 4 "0 1 2 3 4 5 6 7") $ sound "break:4"
+
+-- If you use splice instead of slice, it will play the sound at the
+-- right speed for the 'slot' you give it, so you don't need the loopAt
+
+d1 $ splice 8 (iter 4 "0 1 2 3 4 5 6 7") $ sound "break:4"
+
+-- If you vary the duration of events, then that means the slices will
+-- go faster and slower to match. This can sound great
+
+d1 $ splice 8 "[0 2*2 1 3] [4 5]" $ sound "break:4"
+
+-- You can also use splice to turn a 4:4 loop into a 3:4 one -
+-- e.g. take 8 slices and put them in a six step sequence
+
+d1 $ splice 8 "0 4 2*0 2 2 <6 0*2>" $ sound "break:6"
+
+-- Lets play with that a little.. 
+-- but don't worry too much about these alien functions for now :)
+
+d1 $ chunk 6 (hurry 0.5) $ iter 3 $ off (5/12) (|* speed 2)
+  $ splice 8 "0 4 2*0 2 2 <6 0*2>" $ sound "<break:4 break:6>"

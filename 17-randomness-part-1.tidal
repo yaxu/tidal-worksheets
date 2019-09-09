@@ -1,0 +1,94 @@
+**********RANDOMNESS**********
+
+-- Often you don't need to use these random functions, because if you
+-- use a few non-random transformations together it starts sounding
+-- random anyway! But hey..
+
+-- DEGRADE
+
+-- Lets say you had a complex pattern going on and weren't sure what to do next:
+
+d1 $ chunk 4 (hurry 2) $ off "<1%8 1%16>" (# crush 3) $ sound "kick:3(5,8) [clap:3 snare:4]"
+
+-- Degrade is a good way to break it down, leaving space in the music to start adding a new pattern:
+
+d1 $ degrade $ chunk 4 (hurry 2) $ off "<1%8 1%16>" (# crush 3) $ sound "kick:3(5,8) [clap:3 snare:4]"
+
+-- You can degrade a little:
+
+d1 $ degradeBy 0.2 $ chunk 4 (hurry 2) $ off "<1%8 1%16>" (# crush 3) $ sound "kick:3(5,8) [clap:3 snare:4]"
+
+-- Or a lot
+
+d1 $ degradeBy 0.8 $ chunk 4 (hurry 2) $ off "<1%8 1%16>" (# crush 3) $ sound "kick:3(5,8) [clap:3 snare:4]"
+
+-- SOMETIMES / SOMECYCLES
+
+-- Sometimes is a great way to add some variety, letting you apply a
+-- function 'sometimes' (50% of the time).
+
+-- Sometimes add an effect:
+
+d1 $ sometimes (# (room 0.4 # sz 0.7)) $ n "0 1 2 [3 4 5]" # sound "cpu2"
+
+-- Sometimes speed the pattern up:
+
+d1 $ sometimes (hurry 2) $ n "0 1 2 [3 4 5]" # sound "cpu2"
+
+-- someCycles is similar but operates on a cycle-by-cycle basis:
+
+d1 $ someCycles (hurry 2) $ n "0 1 2 [3 4 5]" # sound "cpu2"
+
+-- What if you want to sometimes apply two or more functions? You can
+-- 'compose' functions together with .
+
+d1 $ someCycles (fast 2 . rev . chop 8) $ n "0 1 2 [3 4 5]" # sound "cpu2"
+
+-- If you're adding an effect, you have to wrap it in parenthesis:
+
+d1 $ someCycles (fast 2 . rev . chop 8 . (# speed 2)) $ n "0 1 2 [3 4 5]" # sound "cpu2"
+
+-- SHUFFLE and SCRAMBLE
+
+-- Lets start with some numbers:
+
+d1 $ slow 4 $ n "0 .. 7" # sound "numbers" # speed 1.1
+
+-- Shuffle the pattern in quarters - as there are eight events per
+-- cycle in the pattern, it'll shuffle pairs of sounds together:
+
+d1 $ slow 4 $ shuffle 4 $ n "0 .. 7" # sound "numbers" # speed 1.1
+
+-- With shuffle, each parts will always be played exactly once per
+-- cycle. This isn't true of scramble:
+
+d1 $ slow 4 $ scramble 4 $ n "0 .. 7" # sound "numbers" # speed 1.1
+
+-- It takes a while to hear the difference, but scramble sounds 'less even'
+d1 $ shuffle 4 $ n "0 .. 7" # sound "cpu2" # speed 1.1
+
+d1 $ scramble 4 $ n "0 .. 7" # sound "cpu2" # speed 1.1
+
+-- NON-RANDOM SCRAMBLING
+
+-- Rather than scrambling in an arbitrary way, you can scramble a
+-- pattern just by shifting it by a different amount each cycle:
+
+d1 $ "<0.25 0.5 0.125>" <~ n "0 .. 7" # sound "cpu2" # speed 1.1
+
+-- It takes a while to notice that this repeats every third cycle!
+
+-- This has two layers and will repeat only every 12 cycle:
+
+d1 $ "<0.5 0.125 0 0.75>" <~ ("<0.25 0.5 0.125>" <~ n "0 .. 7" # sound "cpu2" # speed 1.1)
+
+-- Add more transformations to add more variety:
+
+d1 $ iter 8 $ "<0.5 0.125 0 0.75>" <~ ("<0.25 0.5 0.125>" <~ n "0 .. 7" # sound "cpu2" # speed 1.1)
+
+d1 $ chunk 4 (hurry 2) $ iter 8 $
+  "<0.5 0.125 0 0.75>" <~ ("<0.25 0.5 0.125>" <~ n "0 .. 7" # sound "cpu2" # speed 1.1)
+
+-- This is a bit like making your own pseudo-randomness, where you
+-- have more control, more able to strike a balance between
+-- unpredictability and coherence..

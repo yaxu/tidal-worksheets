@@ -1,0 +1,73 @@
+**********EVEN MORE RANDOMNESS OH MY**********
+
+-- Earlier we met the rand function
+-- which gives you a continuous stream of random numbers, from 0 to 1:
+
+d1 $ sound "arpy*4" |< speed (range 1 4 rand)
+
+-- If you run resetCycles a few times while the above is playing,
+-- you'll notice that the random stream is deterministic, always
+-- returning the same values for the same point along the timeline of
+-- cycles.
+
+resetCycles
+
+setcps 0.6
+
+-- You can also loop the first cycle repeatedly with loopFirst:
+
+d1 $ loopFirst $ sound "arpy(5,8)" |< speed (range 1 4 rand)
+
+-- Or pick another cycle to loop, by shifting the random pattern in time, with <~
+
+d1 $ loopFirst $ sound "arpy(5,8)" |< speed (1 <~ range 1 4 rand)
+
+-- Basically a lazy way to make riffs!
+
+-- irand
+
+-- 'rand' makes floating point (decimal) numbers, whereas 'irand' makes
+-- integral (whole) numbers. e.g. `irand 8` gives you numbers from 0 to 7:
+
+d1 $ sound "arpy(5,8)" |< n (irand 8)
+
+-- If you repeat each cycle twice, it stops sounding random. Magic!
+
+d1 $ repeatCycles 2 $ sound "arpy(5,8)" |< n (irand 8)
+
+-- choose
+-- With `choose`, you can randomly choose between a particular set of values:
+
+d1 $ sound "superpiano(5,8)" |< n (choose[0, 7, 12])
+  # lpf 3000 #lpq 0.2 # room 0.2 # sz 0.7
+
+-- cycleChoose
+-- `cycleChoose` is similar but picks a value once per cycle
+d1 $ sound "superpiano(5,8)" |< n (cycleChoose [0, 7, 12])
+  # lpf 3000 #lpq 0.2 # room 0.2 # sz 0.7
+
+-- Howabout if you want to pick between patterns, not single values?
+-- THIS DOESN'T WORK, darn it
+d1 $ sound "supermandolin" >| n (cycleChoose ["a6 e", "c e g a", "c e f g"])
+  # lpf 3000 #lpq 0.2 # room 0.2 # sz 0.7 # legato 2
+
+-- That's because if you choose between patterns, you end up with
+-- _patterns of patterns_, and not a simple pattern (!)
+
+-- But! You can join a pattern of patterns back into a pattern with 'unwrap':
+
+let foo = "a6 e"
+in
+d1 $ sound "supermandolin" >| n (unwrap $ cycleChoose [foo, "c e g a", "c e f g"])
+  # lpf 3000 #lpq 0.2 # room 0.2 # sz 0.7 # legato 2
+
+-- Lets pattern that a bit more:
+d1 $ jux rev $ arpeggiate $ off 0.125 (|+ n "<12 7 24>")
+  $ sound "supermandolin" >| n (unwrap $ cycleChoose ["a6 e(3,8)", "c e g a*2", "c e*2 f g"])
+  # lpf 3000 #lpq 0.2 # room 0.2 # sz 0.7 # legato 2
+
+-- The trick is finding a nice balance between randomised variety and
+-- repeating structure around it.
+
+d1 $ n "c e f g" # sound (choose ["rash", "jx", "xx"]) |+ n 24
+

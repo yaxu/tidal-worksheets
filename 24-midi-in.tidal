@@ -1,0 +1,12 @@
+
+**********MIDI IN**********
+
+-- First check out the 22-superdirt-midi.sc worksheet
+-- There's some code you need to run in SuperCollider
+
+-- Once you've done that you can use CC's in to tidal:
+
+d1 $ sound "arpy*8" # speed (cF 1 "12")
+
+-- In the above line of code '1' is the midi channel and '12' is the CC number
+-- Don't forget tidal starts counting MIDI channels at 0 ;)

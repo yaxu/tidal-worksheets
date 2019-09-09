@@ -1,0 +1,49 @@
+**********MINI NOTATION PART 2!**********
+
+-- <> is similar to [], but gives one event every cycle. Compare these:
+
+d1 $ n "<0 1 2 3>" # sound "cpu1"
+
+d1 $ n "[0 1 2 3]" # sound "cpu1"
+
+-- What's going on here?
+
+d1 $ n ("[0 1 2*2 3]" + "<0 1 2 3>") # sound "cpu1"
+
+-- Instead of grouping subpatterns with [], you can separate them with .
+-- These both do exactly the same:
+
+d1 $ n "0*2 1 2 . 2 4 2 4" # sound "cpu1"
+
+d1 $ n "[0*2 1 2] [2 4 2 4]" # sound "cpu1"
+
+-- Usually, the more events you add to a subsequence, the faster they
+-- go, to fit them all in the cycle or step. However, you can 'slow
+-- down' a subsequence with /, for example:
+
+d1 $ n "0*2 [1 2 3 4]/2" # sound "cpu1"
+
+-- The `[1 2 3 4]` is slowed down by half using /2. So the first time
+-- round it'll only play the first half "1 2" and the second time
+-- round it'll carry on where it left off and play "3 4".
+
+-- Things get a bit funky if you have a number of events that aren't
+-- divisible by the ratio. E.g.:
+
+d1 $ n "0*2 [1 2 3 4]/3" # sound "cpu1"
+
+d1 $ n "0*2 [1 2 3 4]/3 8*4 [5 3*2 2*2]/5" # sound "cpu1"
+
+-- Actually, * is works the same way as /, it is just making a
+-- subsequence faster, thereby causing it to repeat. You don't have to
+-- give a whole number, you can give the speed as a decimal number:
+
+d1 $ sound "bd*1.5 sd:2"
+
+-- Or as a ratio:
+
+d1 $ sound "bd*3%2 sd:2"
+
+-- You can make some unsteady, lilting rhythms this way:
+
+d1 $ sound "bd ht*1.5 [lt ht]*2 [sd cp:3 mt lt]*1%3"

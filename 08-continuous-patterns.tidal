@@ -1,0 +1,71 @@
+**********CONTINUOUS PATTERNS**********
+
+{- Most often we deal with _discrete_ patterns, those with events that
+ have a beginning and ending.
+   There are also _continuous_ patterns, which continuously vary.
+   Lets listen to some:
+-}
+
+-- Sine wave:
+
+d1 $ sound "bd*16" |< pan sine
+
+-- |< tells tidal to get the structure from the left
+-- we'll cover this in more detail later
+
+-- Continous patterns tend to give you numbers between 0 and 1. You
+-- can change that with the 'range' function, e.g. for values from 1 to 2:
+
+d1 $ sound "bd*16" |< speed (range 1 2 sine)
+
+-- (In this case we could have just added 1 to get the same range)
+
+d1 $ sound "bd*16" |< speed (sine + 1)
+
+-- Triangular wave:
+
+d1 $ sound "bd*16" |< pan tri
+
+d1 $ sound "bd*16" |< speed (range 1 2 tri)
+
+-- Sawtooth wave:
+
+d1 $ sound "bd*16" |< pan saw
+
+d1 $ sound "bd*16" |< speed (range 1 2 saw)
+
+-- These continuous patterns have infinite detail, but we can only
+-- hear them if we 'sample' them.
+
+-- The >| operator tells tidal to take the structure from the right -
+-- in this case the speed pattern, with is a continuous sawtooth. We
+-- don't hear anything because the result is continuous - its events
+-- don't have a beginning and end to hear!
+
+d1 $ sound "bd" >| speed (range 1 2 saw)
+
+-- We can fix it by transforming the sawtooth to make it discrete,
+-- e.g. with the 'segment' function,
+-- this samples the pattern at a fixed rate:
+
+d1 $ sound "bd" >| speed (segment 16 $ range 1 2 saw)
+
+-- Another way is to use "struct" to sample it with a boolean
+-- true/false pattern (the 't' stands for 'true'):
+
+d1 $ sound "bd" >| speed (struct "t ~ t ~ ~ t t" $ range 1 2 saw)
+
+-- (we'll cover boolean patterns in a bit more detail later)
+
+-- Or we can go back to taking the structure from a different part of
+-- the pattern, by switching back to the |< operator.
+
+d1 $ sound "bd(5,8,<0 2>)" |< speed (range 1 2 saw)
+
+-- Random streams
+
+-- `rand` is also gives a continuous pattern, of random numbers:
+
+d1 $ sound "arpy*4 arpy*3" |< speed (range 1 4 rand)
+
+-- More on randomness on another tidal worksheet..

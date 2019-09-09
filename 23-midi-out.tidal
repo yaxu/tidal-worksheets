@@ -1,0 +1,70 @@
+**********MIDI OUT**********
+
+-- First you'll need to do some setup in SuperCollider
+-- See 22-superdirt-midi.sc for more info
+
+-- The basic syntax for sending MIDI notes is similar to sending
+-- patterns to a software synth, using the name of our MIDI device
+-- that we defined in SuperCollider earlier
+
+-- NB we specify the midi channel using # midichan
+-- But watch out, tidal starts countin from 0
+-- so midichan 0 in tidal will be midi channel 1 on your synth :)
+-- This can also be patterned
+-- e.g. if you want to send to different voices
+
+d1 $ midinote "41" # sound "midi"
+  # midichan "0"
+
+-- Here we're using midinote, but we can also use n or note,
+-- just like we did with SuperCollider synths
+-- (midinote might be more useful for drum machines though)
+
+d1 $ note "1 6 7 8" # sound "midi"
+  # midichan "0"
+
+d1 $ n "c4 d4 e5 g3" +| sound "midi(<3 5>,8)"
+
+-- We can add other parameters like # legato
+
+d1 $ note "<1 6 4 8>" +| sound "midi(<3 5 6>,8)"
+  # legato 4
+  # midichan "0"
+
+-- Or any MIDI CCs your synth might have!
+
+-- ccn - the CC param number you want to control
+-- ccv - the value to send to the CC param, ranging from 0 to 127
+
+-- e.g. sending a sine wave sweep to CC param 30:
+
+d2 $ ccn "30*8" # ccv (slow 4 $ range 0 127 sine) # s "midi"
+
+hush
+
+-- If you have a feature on your device that listens on a specific CC number
+-- you can give it a friendly name like so:
+
+let ringMod = 30
+d2 $ ccv "0 20 50 60" # ccn ringMod # s "midi"
+
+-- you can also sync your synth to tidal's clock
+-- we're using `p "name"` here to keep these commands separate from our main channels
+-- but you could also use d1, d2 etc
+
+p "midiclock" $ midicmd "midiClock*48" # s "midi"
+
+-- Your MIDI device should then adjust its BPM to Tidal's cps.
+-- Then it's worth sending a 'stop' message like this:
+
+once $ midicmd "stop" # s "midi"
+
+-- and then finally a start message to start the MIDI clock at the right time.
+-- The following sends a start message every fourth cycle:
+
+p "midictl" $ midicmd "start/4" # s "midi"
+
+-- Once everything's started and in sync,
+-- it's probably best to stop sending the start messages to avoid glitching:
+
+p "midictl" $ silence
